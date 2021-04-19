@@ -10,6 +10,8 @@ namespace GTerm.NET.Contracts
     {
         Task<bool> Open();
 
+        Task<bool> Close();
+
         Task<bool> Run();
 
     }

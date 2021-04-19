@@ -1,4 +1,5 @@
 ﻿using GTerm.NET.Contracts;
+using GTerm.NET.Menu.TerminalScreens;
 using GTerm.NET.Terminals;
 using Spectre.Console;
 using System;
@@ -20,12 +21,12 @@ namespace GTerm.NET.Menu
             this.terminals = terminals;
         }
 
-        Task<ScreenResult> IScreen.Display()
+        public Task<ScreenResult> Display()
         {
             var options = new List<MenuOption>
             {
                 new MenuOption("1. Configure Serial Port", () => LoadSerialPortConfguration()),
-                new MenuOption("2. Open Default Terminal", () => OpenAndRunPort()),
+                new MenuOption("2. Open Default Terminal", () => OpenAndRunDefaultTerminalScreen()),
                 new MenuOption("0. Exit", () => Return()),
             };
 
@@ -55,6 +56,15 @@ namespace GTerm.NET.Menu
             var success = await terminal.Run();
         }
 
+        private Task OpenAndRunDefaultTerminalScreen()
+        {
+            result.NextScreen = typeof(DefaultTerminalScreen);
+
+            result.NavigationOption = NavigationOption.LoadNew;
+
+            return Task.CompletedTask;
+        }
+
         private Task Return()
         {
             result.NavigationOption = NavigationOption.Previous;
@@ -73,7 +83,7 @@ namespace GTerm.NET.Menu
 
         public void Dispose()
         {
-            // Nothing to Dispose.
+            // Nothing to Dispose;
         }
 
         public Task Exit()

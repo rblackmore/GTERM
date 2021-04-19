@@ -37,6 +37,7 @@ namespace GTerm.NET.DependencyInjection
             foreach (Type myType in types)
             {
                 services.AddScoped(typeof(ITerminal), myType);
+                services.AddScoped(myType);
             }
 
             return services;

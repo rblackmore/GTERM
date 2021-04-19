@@ -20,7 +20,7 @@ namespace GTerm.NET.Terminals
         {
             this.port = port;
             this.portOptions = portOptions;
-            this.port.DataReceived += this.PortDatea_Received;
+            
         }
 
         private void PortDatea_Received(object sender, SerialDataReceivedEventArgs e)
@@ -45,28 +45,47 @@ namespace GTerm.NET.Terminals
             }
         }
 
-        public Task<bool> Run()
+        public Task<bool> Close()
+        {
+            if (!port.IsOpen)
+                return Task.FromResult(true);
+
+            port.Close();
+
+            return Task.FromResult(!port.IsOpen);
+        }
+
+        public async Task<bool> Run()
         {
 
             if (!port.IsOpen)
             {
-                return Task.FromResult(false);
+                return false;
             }
 
             bool exit = false;
 
-            AnsiConsole.MarkupLine($"[orange1]Terminal Ready. Press [lightgreen]CTRL+Q[/] To Exit[/]");
-
+            AnsiConsole.MarkupLine($"[orange1]Terminal Ready. Press [lightgreen]CTRL+Q[/] To Exit or [lightgreen]ALT+C[/] to clear[/]");
+            
+            this.port.DataReceived += this.PortDatea_Received;
+            await Task.Delay(500);
             do
             {
 
                 ConsoleKeyInfo input = Console.ReadKey(true);
 
                 exit = input.Modifiers.HasFlag(ConsoleModifiers.Control) && input.Key.HasFlag(ConsoleKey.Q);
+                bool clear = input.Modifiers.HasFlag(ConsoleModifiers.Alt) && input.Key.HasFlag(ConsoleKey.C);
+
+                if (clear)
+                {
+                    Console.Clear();
+                    continue;
+                }
 
                 if (exit)
                 {
-                    Console.WriteLine("Exiting");
+                    Console.WriteLine("Closing Terminal...");
                     continue;
                 }
 
@@ -74,7 +93,7 @@ namespace GTerm.NET.Terminals
 
             } while (!exit);
 
-            return Task.FromResult(true);
+            return true;
 
         }
 

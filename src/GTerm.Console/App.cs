@@ -1,6 +1,7 @@
 ﻿using GTerm.NET.Configuration;
 using GTerm.NET.Contracts;
 using GTerm.NET.Menu;
+using GTerm.NET.Menu.TerminalScreens;
 using GTerm.NET.Terminals;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,28 +41,15 @@ namespace GTerm.NET
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            var screenManager = this.serviceProvider.GetService<ScreenManager>();
 
             if (appConfiguration.Value.AutoOpen)
             {
-                var terminal = this.serviceProvider.GetServices<ITerminal>().First(t => t.GetType() == typeof(DefaultTerminal));
-
-                var isOpen = await terminal.Open();
-
-                if (!isOpen)
-                {
-                    AnsiConsole.WriteLine("Press any key to exit.");
-                    Console.ReadKey(true);
-                    this.applicationLifetime.StopApplication();
-                    return;
-                }
-
-                await terminal.Run();
+                await screenManager.Run<DefaultTerminalScreen>();
             }
             else
             {
-                var screenManager = this.serviceProvider.GetService<ScreenManager>();
                 await screenManager.Run<TopMenuScreen>();
-
             }
 
             this.applicationLifetime.StopApplication();

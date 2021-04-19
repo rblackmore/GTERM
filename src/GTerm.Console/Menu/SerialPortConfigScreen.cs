@@ -1,12 +1,10 @@
-﻿using Spectre.Console;
+﻿using GTerm.NET.Contracts;
+using GTerm.NET.Menu;
+using Spectre.Console;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using GTerm.NET.Contracts;
-using GTerm.NET.Menu;
 
 namespace GTerm.NET
 {
