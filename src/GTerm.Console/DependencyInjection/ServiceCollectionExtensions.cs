@@ -32,7 +32,8 @@ namespace GTerm.NET.DependencyInjection
 
             var types = assembly
                 .GetTypes()
-                .Where(myType => myType.GetInterfaces().Contains(typeof(ITerminal)));
+                .Where(myType => myType.GetInterfaces().Contains(typeof(ITerminal)))
+                .Where(myType => !myType.IsAbstract);
 
             foreach (Type myType in types)
             {
