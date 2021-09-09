@@ -27,6 +27,7 @@ namespace GTerm.NET.Menu
             {
                 new MenuOption("1. Configure Serial Port", () => LoadSerialPortConfguration()),
                 new MenuOption("2. Open Default Terminal", () => OpenAndRunDefaultTerminalScreen()),
+                // new MenuOption("3. Open Receive Only Terminal", () => OpenAndRunReceiveOnlyTerminalScreen()),
                 new MenuOption("0. Exit", () => Return()),
             };
 

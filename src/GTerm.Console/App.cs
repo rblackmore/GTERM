@@ -26,7 +26,11 @@ namespace GTerm.NET
         private readonly SerialPort port;
         private readonly IOptions<ApplicationOptions> appConfiguration;
 
-        public App(IServiceProvider serviceProvider, IConfiguration configuration, IHostApplicationLifetime applicationLifetime, IOptions<ApplicationOptions> appConfiguration)
+        public App(
+            IServiceProvider serviceProvider,
+            IConfiguration configuration,
+            IHostApplicationLifetime applicationLifetime,
+            IOptions<ApplicationOptions> appConfiguration)
         {
             this.serviceProvider = serviceProvider
                 .CreateScope()

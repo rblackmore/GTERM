@@ -1,6 +1,8 @@
 ﻿using GTerm.NET.Configuration;
 using GTerm.NET.DependencyInjection;
 using GTerm.NET.Menu;
+using GTerm.NET.Terminals;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -34,12 +36,12 @@ namespace GTerm.NET
                 {
                     logging.ClearProviders();
                 })
-                .ConfigureServices((context, services) =>
+                .ConfigureServices((Action<HostBuilderContext, IServiceCollection>)((context, services) =>
                 {
                     services.AddHostedService<App>();
 
                     // This code is bad and I should feel bad.
-                    services.AddSingleton<SerialPort>(services =>
+                    services.AddSingleton((Func<IServiceProvider, SerialPort>)(services =>
                     {
                         var options = services.GetService<IOptions<PortOptions>>().Value;
                         var port = new SerialPort();
@@ -67,13 +69,14 @@ namespace GTerm.NET
                         }
 
                         return port;
-                    });
+                    }));
 
                     services.AddSingleton<ScreenManager>();
                     services.AddScreens();
                     services.AddTerminals();
-                    services.Configure<PortOptions>(context.Configuration.GetSection(PortOptions.PortSettings));
+                    services.Configure<PortOptions>(context.Configuration.GetSection(PortOptions.ConfigurationName));
                     services.Configure<ApplicationOptions>(context.Configuration.GetSection(ApplicationOptions.App));
-                });
+                    services.Configure<ReceiveOnlyTerminalOptions>(context.Configuration.GetSection(ReceiveOnlyTerminal.ConfigurationName));
+                }));
     }
 }

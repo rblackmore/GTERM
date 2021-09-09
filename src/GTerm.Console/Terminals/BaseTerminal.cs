@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO.Ports;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 using GTerm.NET.Configuration;
-using GTerm.NET.Contracts;
 
 using Microsoft.Extensions.Options;
 
@@ -14,7 +10,7 @@ using Spectre.Console;
 
 namespace GTerm.NET.Terminals
 {
-    public abstract class BaseTerminal : ITerminal
+    public abstract class BaseTerminal
     {
         protected readonly SerialPort port;
         protected readonly IOptions<PortOptions> portOptions;
@@ -25,16 +21,16 @@ namespace GTerm.NET.Terminals
             this.portOptions = portOptions;
         }
 
-        private void PortDatea_Received(object sender, SerialDataReceivedEventArgs e)
+        private void PortData_Received(object sender, SerialDataReceivedEventArgs e)
         {
             var _port = (SerialPort)sender;
 
             Console.Write(_port.ReadExisting());
         }
 
-        protected void AddListener()
+        protected void AddListener(SerialDataReceivedEventHandler handler = null)
         {
-            this.port.DataReceived += this.PortDatea_Received;
+            this.port.DataReceived += (handler != null) ? handler : PortData_Received;
         }
 
         public virtual Task<bool> Open()
@@ -61,6 +57,31 @@ namespace GTerm.NET.Terminals
             port.Close();
 
             return Task.FromResult(!port.IsOpen);
+        }
+
+        protected bool ExitKeyPressed(ConsoleKeyInfo input)
+        {
+            return input.Modifiers.HasFlag(ConsoleModifiers.Control) && input.Key.HasFlag(ConsoleKey.Q);
+        }
+
+        protected bool ClearKeyPressed(ConsoleKeyInfo input)
+        {
+            return input.Modifiers.HasFlag(ConsoleModifiers.Alt) && input.Key.HasFlag(ConsoleKey.C);
+        }
+
+        protected bool ClearIfClearKeyPressed(ConsoleKeyInfo input)
+        {
+            bool clear = this.ClearKeyPressed(input);
+
+            if (clear)
+                Console.Clear();
+
+            return clear;
+        }
+
+        protected void TerminalStartWelcomeMessage()
+        {
+            AnsiConsole.MarkupLine($"[orange1]Terminal Ready. Press [lightgreen]CTRL+Q[/] To Exit or [lightgreen]ALT+C[/] to clear[/]");
         }
 
         public abstract Task<bool> Run();

@@ -1,27 +1,35 @@
-﻿using GTerm.NET.Contracts;
-using GTerm.NET.Terminals;
-using Spectre.Console;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
+
+using GTerm.NET.Contracts;
+using GTerm.NET.Terminals;
+
+using Spectre.Console;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GTerm.NET.Menu.TerminalScreens
 {
+    // TODO: THis class should take in an ITerminal. At Runtime i need to decide which implementation to use.
+    // A factory Pattern might be appropriate here, instead of injecting the terminal, inject a factory.
     public class DefaultTerminalScreen : IScreen, IDisposable
     {
         private ScreenResult result = new();
 
-        private readonly DefaultTerminal terminal;
+        private readonly Func<BaseTerminal> terminalFactory;
+        private BaseTerminal terminal;
 
-        public DefaultTerminalScreen(DefaultTerminal terminal)
+        public DefaultTerminalScreen(Func<BaseTerminal> terminalFactory)
         {
-            this.terminal = terminal;
+            this.terminalFactory = terminalFactory;
         }
 
         public async Task<ScreenResult> Display()
         {
+
+            if (this.terminal == null)
+                this.terminal = this.terminalFactory();
+
             var isOpen = await terminal.Open();
 
             if (!isOpen)

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GTerm.NET.Menu
@@ -17,6 +14,5 @@ namespace GTerm.NET.Menu
             this.DisplayText = displayText;
             this.Action = action;
         }
-
     }
 }

@@ -12,6 +12,8 @@ namespace GTerm.NET.Terminals
 {
     public class DefaultTerminal : BaseTerminal
     {
+        public const string ConfigurationName = "Terminals:DefaultTerminal";
+
         public DefaultTerminal(SerialPort port, IOptions<PortOptions> portOptions)
             : base(port, portOptions)
         {
@@ -21,30 +23,26 @@ namespace GTerm.NET.Terminals
         {
 
             if (!port.IsOpen)
-            {
                 return false;
-            }
 
             bool exit = false;
 
-            AnsiConsole.MarkupLine($"[orange1]Terminal Ready. Press [lightgreen]CTRL+Q[/] To Exit or [lightgreen]ALT+C[/] to clear[/]");
+            this.TerminalStartWelcomeMessage();
 
             this.AddListener();
 
             await Task.Delay(500);
+
+
             do
             {
 
-                ConsoleKeyInfo input = Console.ReadKey(true);
+                var input = Console.ReadKey(true);
 
-                exit = input.Modifiers.HasFlag(ConsoleModifiers.Control) && input.Key.HasFlag(ConsoleKey.Q);
-                bool clear = input.Modifiers.HasFlag(ConsoleModifiers.Alt) && input.Key.HasFlag(ConsoleKey.C);
-
-                if (clear)
-                {
-                    Console.Clear();
+                exit = this.ExitKeyPressed(input);
+                
+                if (ClearIfClearKeyPressed(input))
                     continue;
-                }
 
                 if (exit)
                 {

@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GTerm.NET.Configuration
+﻿namespace GTerm.NET.Configuration
 {
     public class PortOptions
     {
-        public const string PortSettings = "PortSettings";
+        public const string ConfigurationName = "PortOptions";
 
         public string Name { get; set; }
         
