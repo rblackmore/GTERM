@@ -32,9 +32,9 @@ namespace GTerm.NET
             IHostApplicationLifetime applicationLifetime,
             IOptions<ApplicationOptions> appConfiguration)
         {
-            this.serviceProvider = serviceProvider
-                .CreateScope()
-                .ServiceProvider;
+            this.serviceProvider = serviceProvider;
+                //.CreateScope()
+                //.ServiceProvider;
 
             this.configuration = configuration;
             this.applicationLifetime = applicationLifetime;

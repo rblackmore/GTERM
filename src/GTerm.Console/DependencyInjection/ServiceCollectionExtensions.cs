@@ -48,7 +48,7 @@ namespace GTerm.NET.DependencyInjection
 
             services.AddSingleton(Preferences<TerminalPreferences>.Create("TerminalPreferences"));
 
-            services.AddSingleton<Func<BaseTerminal>>(TerminalFactory);
+            services.AddSingleton<BaseTerminal>(TerminalFactory);
 
             return services;
         }
@@ -62,37 +62,35 @@ namespace GTerm.NET.DependencyInjection
                 .ToList();
         }
 
-        private static Func<IServiceProvider, Func<BaseTerminal>> TerminalFactory =>
+        private static Func<IServiceProvider, BaseTerminal> TerminalFactory =>
             services =>
             {
-                return () =>
+                var terminalPreferences = services.GetService<Preferences<TerminalPreferences>>().Value;
+
+                var types = GetBaseTerminalImplementations(Assembly.GetExecutingAssembly());
+
+                foreach (var type in types)
+                {
+
+                    var fields = type.GetFields()
+                        .Where(fi => fi.IsLiteral && !fi.IsInitOnly);
+
+                    if (!fields.Any())
+                        continue;
+
+                    var val = fields.FirstOrDefault().GetRawConstantValue() as string;
+
+                    if (val == terminalPreferences.SelectedTerminal)
                     {
+                        var term = services.GetService(type) as BaseTerminal;
 
-                        var terminalPreferences = services.GetService<Preferences<TerminalPreferences>>().Value;
+                        return term;
+                    }
+                }
 
-                        var types = GetBaseTerminalImplementations(Assembly.GetExecutingAssembly());
-
-                        foreach (var type in types)
-                        {
-
-                            var fields = type.GetFields()
-                                .Where(fi => fi.IsLiteral && !fi.IsInitOnly);
-                            
-                            if (!fields.Any())
-                                continue;
-
-                            var val = fields.FirstOrDefault().GetRawConstantValue() as string;
-
-                            if (val == terminalPreferences.SelectedTerminal)
-                            {
-                                var term = services.GetService(type) as BaseTerminal;
-
-                                return term;
-                            }
-                        }
-
-                        return services.GetService<DefaultTerminal>();
-                    };
+                return services.GetService<DefaultTerminal>();
             };
+
+        
     }
 }

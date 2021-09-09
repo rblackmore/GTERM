@@ -1,17 +1,16 @@
-﻿using GTerm.NET.Configuration;
+﻿using System;
+using System.IO.Ports;
+using System.Threading.Tasks;
+
+using GTerm.NET.Configuration;
 using GTerm.NET.DependencyInjection;
 using GTerm.NET.Menu;
 using GTerm.NET.Terminals;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.IO;
-using System.IO.Ports;
-using System.Threading.Tasks;
 
 namespace GTerm.NET
 {

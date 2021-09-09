@@ -16,19 +16,15 @@ namespace GTerm.NET.Menu.TerminalScreens
     {
         private ScreenResult result = new();
 
-        private readonly Func<BaseTerminal> terminalFactory;
         private BaseTerminal terminal;
 
-        public DefaultTerminalScreen(Func<BaseTerminal> terminalFactory)
+        public DefaultTerminalScreen(BaseTerminal terminal)
         {
-            this.terminalFactory = terminalFactory;
+            this.terminal = terminal;
         }
 
         public async Task<ScreenResult> Display()
         {
-
-            if (this.terminal == null)
-                this.terminal = this.terminalFactory();
 
             var isOpen = await terminal.Open();
 
